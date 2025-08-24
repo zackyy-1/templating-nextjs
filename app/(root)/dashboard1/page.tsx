@@ -2,6 +2,7 @@
 "use client";
 
 import { useState, useEffect } from 'react';
+import { useTheme } from '@/components/context/themeContext';
 import {
   TrendingUp,
   TrendingDown,
@@ -20,8 +21,8 @@ import {
 // Mock data untuk dashboard
 const statsData = [
   {
-    title: "Total Revenue",
-    value: "$45,231.89",
+    title: "Total Revenue", 
+    value: "45,231",
     change: "+12.5%",
     trend: "up",
     icon: DollarSign,
@@ -71,6 +72,7 @@ const topProducts = [
 
 export default function Dashboard() {
   const [currentTime, setCurrentTime] = useState(new Date());
+  const { direction, themeMode, menuColor, headerColor, primaryColor, backgroundColor } = useTheme();
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -90,35 +92,49 @@ export default function Dashboard() {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 p-12"
+      style={{
+            backgroundColor: themeMode === "dark" ? "#1e1e2f" : backgroundColor,
+            direction: direction,
+        }}
+    >
       {/* Header */}
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4"
+        style={{
+          color: themeMode === "dark" ? "#FFFFFF" : "#171717",
+        }}
+      >
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Dashboard</h1>
-          <p className="text-gray-600 mt-1">
+          <h1 className="text-2xl font-bold">Dashboard</h1>
+          <p className="mt-1">
             Welcome back, John! Here's what's happening with your store today.
           </p>
-          <p className="text-sm text-gray-500 mt-1">
+          <p className="text-sm mt-1" suppressHydrationWarning>
             {formatDate(currentTime)} • {currentTime.toLocaleTimeString()}
           </p>
         </div>
         <div className="flex items-center space-x-4">
-          <button className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+          <button className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors" suppressHydrationWarning>
             Generate Report
           </button>
         </div>
       </div>
 
       {/* Stats Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {statsData.map((stat, index) => {
           const Icon = stat.icon;
           return (
-            <div key={index} className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+            <div key={index} className="rounded-xl shadow p-6"
+              style={{
+              backgroundColor: themeMode === "dark" ? "#2a2a3b" : "#ffffff",
+              color: themeMode === "dark" ? "#e5e7eb" : "#111827",
+            }}
+            >
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-gray-600">{stat.title}</p>
-                  <h3 className="text-2xl font-bold text-gray-900 mt-1">{stat.value}</h3>
+                  <p className="text-sm font-medium">{stat.title}</p>
+                  <h3 className="text-2xl font-bold mt-1">{stat.value}</h3>
                   <div className={`flex items-center mt-2 ${
                     stat.trend === "up" ? "text-green-600" : "text-red-600"
                   }`}>
@@ -128,7 +144,7 @@ export default function Dashboard() {
                       <ArrowDown className="h-4 w-4 mr-1" />
                     )}
                     <span className="text-sm font-medium">{stat.change}</span>
-                    <span className="text-sm text-gray-500 ml-1">from last week</span>
+                    <span className="text-sm ml-1">from last week</span>
                   </div>
                 </div>
                 <div className={`p-3 rounded-full bg-${stat.color}-100`}>
@@ -143,18 +159,33 @@ export default function Dashboard() {
       {/* Charts and Main Content */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Revenue Chart */}
-        <div className="lg:col-span-2 bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+        <div className="lg:col-span-2 rounded-xl shadow p-6"
+          style={{
+              backgroundColor: themeMode === "dark" ? "#2a2a3b" : "#ffffff",
+              color: themeMode === "dark" ? "#e5e7eb" : "#111827",
+            }}
+        >
           <div className="flex items-center justify-between mb-6">
-            <h2 className="text-lg font-semibold text-gray-900">Revenue Overview</h2>
+            <h2 className="text-lg font-semibold">Revenue Overview</h2>
             <div className="flex items-center space-x-2">
-              <select className="text-sm border border-gray-300 rounded-lg px-3 py-1">
+              <select className="text-sm rounded-lg px-3 py-1" 
+                style={{
+                  backgroundColor: themeMode === "dark" ? "#1e1e2f" : backgroundColor,
+                  direction: direction,
+              }}
+              suppressHydrationWarning>
                 <option>Last 7 days</option>
                 <option>Last 30 days</option>
                 <option>Last 90 days</option>
               </select>
             </div>
           </div>
-          <div className="h-80 bg-gradient-to-b from-blue-50 to-gray-50 rounded-lg flex items-center justify-center">
+          <div className="h-80 rounded-lg flex items-center justify-center"
+            style={{
+                backgroundColor: themeMode === "dark" ? "#1e1e2f" : "#e5e7eb",
+                direction: direction,
+            }}
+          >
             <div className="text-center">
               <Activity className="h-12 w-12 text-blue-400 mx-auto mb-2" />
               <p className="text-gray-600">Revenue chart will be displayed here</p>
@@ -164,20 +195,30 @@ export default function Dashboard() {
         </div>
 
         {/* Recent Activity */}
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+        <div className="rounded-xl shadow p-6"
+           style={{
+              backgroundColor: themeMode === "dark" ? "#2a2a3b" : "#ffffff",
+              color: themeMode === "dark" ? "#e5e7eb" : "#111827",
+            }}
+        >
           <div className="flex items-center justify-between mb-6">
-            <h2 className="text-lg font-semibold text-gray-900">Top Products</h2>
-            <MoreVertical className="h-5 w-5 text-gray-400" />
+            <h2 className="text-lg font-semibold">Top Products</h2>
+            <MoreVertical className="h-5 w-5" />
           </div>
           <div className="space-y-4">
             {topProducts.map((product, index) => (
-              <div key={index} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+              <div key={index} className="flex items-center justify-between p-3 rounded-lg"
+                style={{
+                    backgroundColor: themeMode === "dark" ? "#1e1e2f" : "#e5e7eb",
+                    direction: direction,
+                }}
+              >
                 <div>
-                  <p className="font-medium text-gray-900">{product.name}</p>
-                  <p className="text-sm text-gray-500">{product.sales} sales</p>
+                  <p className="font-medium">{product.name}</p>
+                  <p className="text-sm">{product.sales} sales</p>
                 </div>
                 <div className="text-right">
-                  <p className="font-semibold text-gray-900">{product.revenue}</p>
+                  <p className="font-semibold">{product.revenue}</p>
                   <p className="text-sm text-green-600">+12.5%</p>
                 </div>
               </div>
@@ -187,10 +228,15 @@ export default function Dashboard() {
       </div>
 
       {/* Recent Orders */}
-      <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+      <div className="rounded-xl shadow p-6"
+        style={{
+          backgroundColor: themeMode === "dark" ? "#2a2a3b" : "#ffffff",
+          color: themeMode === "dark" ? "#e5e7eb" : "#111827",
+        }}
+      >
         <div className="flex items-center justify-between mb-6">
-          <h2 className="text-lg font-semibold text-gray-900">Recent Orders</h2>
-          <button className="text-blue-600 hover:text-blue-800 text-sm font-medium">
+          <h2 className="text-lg font-semibold">Recent Orders</h2>
+          <button className="text-blue-600 hover:text-blue-800 text-sm font-medium" suppressHydrationWarning>
             View all orders →
           </button>
         </div>
@@ -198,24 +244,29 @@ export default function Dashboard() {
           <table className="w-full">
             <thead>
               <tr className="border-b border-gray-200">
-                <th className="text-left py-3 px-4 text-sm font-medium text-gray-600">Customer</th>
-                <th className="text-left py-3 px-4 text-sm font-medium text-gray-600">Product</th>
-                <th className="text-left py-3 px-4 text-sm font-medium text-gray-600">Amount</th>
-                <th className="text-left py-3 px-4 text-sm font-medium text-gray-600">Status</th>
-                <th className="text-left py-3 px-4 text-sm font-medium text-gray-600">Date</th>
+                <th className="text-left py-3 px-4 text-sm font-medium">Customer</th>
+                <th className="text-left py-3 px-4 text-sm font-medium">Product</th>
+                <th className="text-left py-3 px-4 text-sm font-medium">Amount</th>
+                <th className="text-left py-3 px-4 text-sm font-medium">Status</th>
+                <th className="text-left py-3 px-4 text-sm font-medium">Date</th>
               </tr>
             </thead>
-            <tbody>
+            <tbody 
+              style={{
+                backgroundColor: themeMode === "dark" ? "#2a2a3b" : "#ffffff",
+                color: themeMode === "dark" ? "#e5e7eb" : "#111827",
+              }}
+            >
               {recentOrders.map((order) => (
-                <tr key={order.id} className="border-b border-gray-100 hover:bg-gray-50">
+                <tr key={order.id} className="border-b border-gray-100 hover:bg-gray-300 hover:text-gray-900">
                   <td className="py-3 px-4">
-                    <div className="font-medium text-gray-900">{order.customer}</div>
+                    <div className="font-medium">{order.customer}</div>
                   </td>
                   <td className="py-3 px-4">
-                    <div className="text-gray-900">{order.product}</div>
+                    <div>{order.product}</div>
                   </td>
                   <td className="py-3 px-4">
-                    <div className="font-medium text-gray-900">{order.amount}</div>
+                    <div className="font-medium">{order.amount}</div>
                   </td>
                   <td className="py-3 px-4">
                     <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
@@ -229,7 +280,7 @@ export default function Dashboard() {
                     </span>
                   </td>
                   <td className="py-3 px-4">
-                    <div className="text-sm text-gray-500">{order.date}</div>
+                    <div className="text-sm">{order.date}</div>
                   </td>
                 </tr>
               ))}

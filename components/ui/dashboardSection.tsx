@@ -2,6 +2,8 @@
 "use client";
 
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Legend } from "recharts";
+import { useEffect, useState } from "react"; 
+import { useTheme } from "../context/themeContext";
 
 const browserData = [
   { name: "Chrome", company: "Google, Inc.", users: 35502, change: 12.75, icon: "/images/svgicons/chrome.svg" },
@@ -27,24 +29,45 @@ const projectData = [
 ];
 
 export default function DashboardSection() {
+  const [isClient, setIsClient] = useState(false);
+  const { themeMode } = useTheme();
+
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
+
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6" suppressHydrationWarning>
       
       {/* Browser Usage */}
-      <div className="bg-white p-4 rounded-2xl shadow">
+      <div className="p-4 rounded-2xl shadow transition-colors duration-300"
+        style={{
+          backgroundColor: themeMode === "dark" ? "#2a2a3b" : "#ffffff",
+          color: themeMode === "dark" ? "#e5e7eb" : "#111827",
+        }}
+      >
         <h2 className="text-lg font-semibold mb-4 border-b pb-2">Browser Usage</h2>
         <ul className="space-y-4">
           {browserData.map((item) => (
             <li key={item.name} className="flex items-center justify-between">
               <div className="flex items-center gap-3">
-                <img src={item.icon} alt={item.name} className="w-8 h-8" />
+                {/* Fallback untuk gambar jika tidak tersedia */}
+                <div className="w-8 h-8 bg-gray-200 rounded flex items-center justify-center">
+                  {item.icon ? (
+                    <img src={item.icon} alt={item.name} className="w-6 h-6" />
+                  ) : (
+                    <span className="text-xs font-bold">{item.name.charAt(0)}</span>
+                  )}
+                </div>
                 <div>
                   <p className="font-medium">{item.name}</p>
                   <p className="text-sm text-gray-500">{item.company}</p>
                 </div>
               </div>
-              <div className="text-right" suppressHydrationWarning>
-                <p className="font-semibold">{item.users.toLocaleString()}</p>
+              <div className="text-right">
+                <p className="font-semibold">
+                  {isClient ? item.users.toLocaleString() : item.users}
+                </p>
                 <p
                   className={`text-sm ${
                     item.change > 0 ? "text-green-500" : "text-red-500"
@@ -59,19 +82,26 @@ export default function DashboardSection() {
       </div>
 
       {/* Project Budget */}
-      <div className="bg-white p-4 rounded-2xl shadow">
+      <div className="p-4 rounded-2xl shadow transition-colors duration-300"
+        style={{
+          backgroundColor: themeMode === "dark" ? "#2a2a3b" : "#ffffff",
+          color: themeMode === "dark" ? "#e5e7eb" : "#111827",
+        }}
+      >
         <h2 className="text-lg font-semibold mb-4 border-b pb-2">Project Budget</h2>
         <div className="h-80">
-          <ResponsiveContainer width="100%" height="100%">
-            <BarChart data={projectData}>
-              <XAxis dataKey="month" />
-              <YAxis />
-              <Tooltip />
-              <Legend />
-              <Bar dataKey="orders" fill="#00c49f" name="Total Orders" />
-              <Bar dataKey="sales" fill="#d0d0d0" name="Total Sales" />
-            </BarChart>
-          </ResponsiveContainer>
+          {isClient && (
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart data={projectData}>
+                <XAxis dataKey="month"/>
+                <YAxis />
+                <Tooltip />
+                <Legend />
+                <Bar dataKey="orders" fill="#00c49f" name="Total Orders" />
+                <Bar dataKey="sales" fill="#ff0000" name="Total Sales" />
+              </BarChart>
+            </ResponsiveContainer>
+          )}
         </div>
       </div>
 

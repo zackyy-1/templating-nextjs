@@ -1,11 +1,14 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import {
   Menu, Search, Sun, Moon, ShoppingCart, Bell,
   Grid, Maximize2, Filter, Settings
 } from "lucide-react";
 import ThemeSwitcher from "@/components/ui/themeSwitcher";
+import ShoppingCartDropdown from "@/components/ui/shoppingDropdown";
+import NotificationDropdown from "@/components/ui/notificationDropdown";
+import { useTheme } from "./context/themeContext";
 
 interface HeaderProps {
   onMenuToggle?: () => void;
@@ -14,6 +17,12 @@ interface HeaderProps {
 export default function MainHeader({ onMenuToggle }: HeaderProps) {
   const [fullscreen, setFullscreen] = useState(false);
   const [isSwitcherOpen, setIsSwitcherOpen] = useState(false);
+  const [isCartOpen, setIsCartOpen] = useState(false);
+  const cartButtonRef = useRef<HTMLButtonElement>(null);
+  const [isNotificationOpen, setIsNotificationOpen] = useState(false);
+  const bellButtonRef = useRef<HTMLButtonElement>(null);
+  const { themeMode, setThemeMode } = useTheme();
+
 
   const handleFullscreen = () => {
     if (!fullscreen) {
@@ -26,13 +35,19 @@ export default function MainHeader({ onMenuToggle }: HeaderProps) {
 
   return (
     <>
-      <header className="bg-white border-b border-gray-200 sticky top-0 z-40">
+      <header className="sticky top-0 z-40"
+        style={{
+        backgroundColor: themeMode === "dark" ? "#2a2a3b" : "#ffffff",
+        color: themeMode === "dark" ? "#e5e7eb" : "#111827",
+      }}
+      >
         <div className="flex items-center justify-between h-14 px-4">
           {/* Left Section */}
           <div className="flex items-center gap-3">
             <button
               onClick={onMenuToggle}
-              className="p-2 rounded-md text-gray-500 hover:bg-gray-100"
+              className="p-2 rounded-md hover:bg-gray-100"
+              suppressHydrationWarning
             >
               <Menu className="h-5 w-5" />
             </button>
@@ -41,50 +56,92 @@ export default function MainHeader({ onMenuToggle }: HeaderProps) {
               <input
                 type="text"
                 placeholder="Search..."
-                className="pl-8 pr-3 py-1.5 text-sm border border-gray-300 rounded-lg bg-gray-50 focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
-              />
-              <Search className="h-4 w-4 text-gray-400 absolute left-2 top-2.5" />
+                className="pl-8 pr-3 py-1.5 text-sm rounded-lg focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
+                suppressHydrationWarning/>
+              <Search className="h-4 w-4 absolute left-2 top-2.5" />
             </div>
           </div>
 
           {/* Right Section */}
           <div className="flex items-center gap-4">
-            <Moon className="h-5 w-5 text-gray-500 cursor-pointer hover:text-gray-700" />
+            
+            {/* Dark/Light Toggle */}
+            {themeMode === "light" ? (
+              <Moon
+                onClick={() => setThemeMode("dark")}
+                className="h-5 w-5 cursor-pointer hover:text-gray-400"
+              />
+            ) : (
+              <Sun
+                onClick={() => setThemeMode("light")}
+                className="h-5 w-5 cursor-pointer hover:text-gray-400"
+              />
+            )}
 
-            <div className="relative cursor-pointer">
-              <ShoppingCart className="h-5 w-5 text-gray-500 hover:text-gray-700" />
-              <span className="absolute -top-1 -right-2 bg-yellow-400 text-xs text-white font-bold px-1 rounded-full">
-                5
-              </span>
+            {/* Shopping Cart Button */}
+            <div className="relative">
+              <button
+                ref={cartButtonRef}
+                data-cart-button="true"
+                onClick={() => setIsCartOpen(!isCartOpen)}
+                className="p-1 rounded-md relative"
+                suppressHydrationWarning
+              >
+                <ShoppingCart className="h-5 w-5 hover:text-gray-400" />
+                <span className="absolute -top-1 -right-2 bg-yellow-400 text-xs font-bold px-1.5 py-0.5 rounded-full min-w-[18px] text-center">
+                  5
+                </span>
+              </button>
+
+              {/* Shopping Cart Dropdown */}
+              <ShoppingCartDropdown
+                isOpen={isCartOpen}
+                onClose={() => setIsCartOpen(false)}
+                cartButtonRef={cartButtonRef}
+              />
             </div>
 
-            <div className="relative cursor-pointer">
-              <Bell className="h-5 w-5 text-gray-500 hover:text-gray-700" />
-              <span className="absolute -top-1 -right-2 bg-red-500 text-xs text-white font-bold px-1 rounded-full">
-                6
-              </span>
+
+            <div className="relative">
+              <button
+                ref={bellButtonRef}
+                onClick={() => setIsNotificationOpen(!isNotificationOpen)}
+                className="p-1 rounded-md relative"
+                suppressHydrationWarning
+              >
+                <Bell className="h-5 w-5 hover:text-gray-400" />
+                <span className="absolute -top-1 -right-2 bg-red-500 text-xs font-bold px-1 rounded-full">
+                  6
+                </span>
+              </button>
+
+              <NotificationDropdown
+                isOpen={isNotificationOpen}
+                onClose={() => setIsNotificationOpen(false)}
+                bellButtonRef={bellButtonRef}
+              />
             </div>
 
-            <Grid className="h-5 w-5 text-gray-500 cursor-pointer hover:text-gray-700" />
+            <Grid className="h-5 w-5 cursor-pointer hover:text-gray-400" />
 
-            <button onClick={handleFullscreen}>
-              <Maximize2 className="h-5 w-5 text-gray-500 hover:text-gray-700" />
+            <button onClick={handleFullscreen} suppressHydrationWarning>
+              <Maximize2 className="h-5 w-5 hover:text-gray-400" />
             </button>
 
-            <Filter className="h-5 w-5 text-gray-500 cursor-pointer hover:text-gray-700" />
+            <Filter className="h-5 w-5 cursor-pointer hover:text-gray-400" />
 
             {/* User Info */}
             <div className="flex items-center gap-2">
               <div className="w-8 h-8 rounded-full bg-gray-300" />
               <div className="hidden sm:block text-right">
-                <p className="text-sm font-medium text-gray-700">Zacky</p>
-                <p className="text-xs text-gray-400">Web Developer</p>
+                <p className="text-sm font-medium m-0">John</p>
+                <p className="text-xs">Web Developer</p>
               </div>
             </div>
 
             {/* Settings */}
-            <button onClick={() => setIsSwitcherOpen(true)}>
-              <Settings className="h-5 w-5 text-gray-500 cursor-pointer hover:text-gray-700" />
+            <button onClick={() => setIsSwitcherOpen(true)} suppressHydrationWarning>
+              <Settings className="h-5 w-5 cursor-pointer hover:text-gray-400" />
             </button>
           </div>
         </div>

@@ -1,5 +1,9 @@
 // components/DashboardCards.js
+import { useTheme } from "../context/themeContext";
+
 export default function DashboardCards() {
+  const { themeMode } = useTheme(); // ambil dari context
+
   const cards = [
     {
       title: "Today Orders",
@@ -32,19 +36,28 @@ export default function DashboardCards() {
   ];
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
       {cards.map((card, index) => (
-        <div key={index} className="bg-white rounded-lg shadow p-6">
-          <h2 className="text-lg font-semibold text-gray-700 mb-2">
+        <div
+          key={index}
+          className="rounded-lg shadow p-6 transition-colors duration-300"
+          style={{
+            backgroundColor: themeMode === "dark" ? "#2a2a3b" : "#ffffff",
+            color: themeMode === "dark" ? "#e5e7eb" : "#111827",
+          }}
+        >
+          <h2 className="text-lg font-semibold mb-2">
             {card.title}
           </h2>
-          <p className="text-2xl font-bold text-gray-900 mb-2">
-            {card.value}
-          </p>
-          <p className={`flex items-center ${card.trend === 'up' ? 'text-green-600' : 'text-red-600'}`}>
-            {card.description} 
+          <p className="text-2xl font-bold mb-2">{card.value}</p>
+          <p
+            className={`flex items-center ${
+              card.trend === "up" ? "text-green-400" : "text-red-400"
+            }`}
+          >
+            {card.description}
             <span className="ml-1">
-              {card.trend === 'up' ? '▲' : '▼'} {card.change}
+              {card.trend === "up" ? "▲" : "▼"} {card.change}
             </span>
           </p>
         </div>

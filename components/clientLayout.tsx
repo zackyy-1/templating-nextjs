@@ -1,13 +1,21 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Sidebar from "@/components/sidebar";
 import MainHeader from "@/components/mainheader";
 import Footer from "@/components/footer";
+import { useTheme } from "@/components/context/themeContext";
 
 export default function ClientLayout({ children }: { children: React.ReactNode }) {
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const toggleSidebar = () => setSidebarOpen(!sidebarOpen);
+  const { direction, themeMode } = useTheme();
+
+  useEffect(() => {
+    if (typeof document !== "undefined") {
+      document.documentElement.setAttribute("dir", direction);
+    }
+  }, [direction]);
 
   return (
     <div className="flex">
@@ -24,7 +32,9 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
         <MainHeader onMenuToggle={toggleSidebar} />
 
         {/* Content */}
-        <main className="flex-1 p-6 bg-gray-50">{children}</main>
+        <main className="flex-1 p-0 bg-gray-50">
+          {children}
+        </main>
 
         {/* Footer */}
         <Footer />
